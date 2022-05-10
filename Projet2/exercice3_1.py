@@ -46,14 +46,16 @@ def step(points,beta,alpha1,alpha2):
     return updated_points
 
 
-def do_n_steps(n,points,beta,alpha1,alpha2):
+def do_n_steps(n,points,beta,alpha1,alpha2,fig=True):
     idx1,idx2 = find_indx_beta(points,beta)
-    plot_map(points,beta,idx1,idx2,'plot_init')
+    if fig:
+        plot_map(points,beta,idx1,idx2,'plot_init')
     for i in range(n):
         name = 'plot_step_'+str(i+1)+'_alpha1_'+str(alpha1)+'_alpha2_' +str(alpha2)
         points = step(points,beta,alpha1,alpha2)
-        plot_map(points,beta,idx1,idx2,name)
-    plot_map(points,beta,idx1,idx2,'plot_nend_n_'+str(n)+'_alpha1_'+str(alpha1)+'_alpha2_' +str(alpha2))
+        #plot_map(points,beta,idx1,idx2,name)
+    if fig:
+        plot_map(points,beta,idx1,idx2,'plot_nend_n_'+str(n)+'_alpha1_'+str(alpha1)+'_alpha2_' +str(alpha2))
     return points
 
 
