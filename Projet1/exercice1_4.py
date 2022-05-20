@@ -12,7 +12,7 @@ nu=14.88e-6
 def epsilon(data,Ls):
     epsilons = []
     for i, (df,L) in enumerate(zip(data,Ls)):
-        epsilon = 0.5*np.sqrt(df['Velocity'].var()**3)/(2*L)
+        epsilon = np.sqrt(df['Velocity'].var()**3)/(2*L)
         epsilons.append(epsilon)
     return epsilons
 
@@ -25,7 +25,7 @@ def Taylor_Reynolds(data,epsilons):
     return Reynolds
 
 def Outer_Reynolds(Ls,Umeans):
-    Reynolds = []
+    Reynolds = []#Pk L?
     for i, (L,Umean) in enumerate(zip(Ls,Umeans)):
         Reynold = Umean*L/nu
         Reynolds.append(Reynold)

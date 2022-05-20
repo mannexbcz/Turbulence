@@ -14,48 +14,54 @@ from scipy.ndimage import gaussian_filter1d
 freq = 20e3  # Sampling frequency = 20kHz
 timestep = 1/freq 
 
-def Energy_k(df,index,L,k,Umean):
+def Energy_k(df,index,k,Umean):
     #x = df.iloc[0:index,1]
-    u = df.iloc[0:100000,0]-Umean
-    #dx= Umean*timestep
-    x = df.iloc[0:100000,1]
-    #L=x[-1]
-    Ek1 = 0.5*np.abs(1/np.sqrt(2*np.pi*L)*integrate.trapz(u*np.exp(-1j*k*x),dx=-Umean*timestep))**2
-    Ek2 = 0.5*np.abs(1/np.sqrt(2*np.pi*L)*integrate.trapz(u*np.exp(1j*k*x),dx=-Umean*timestep))**2   
+    u = df.iloc[:,0]-Umean
+    #u = df['Velocity']
+    dx= Umean*timestep
+    x = df.iloc[:,1]
+    #x = df['x']
+    L=x[0]-x[-1:]
+    #L = dx*df['Velocity'].count()
+    Ek1 = 0.5*np.abs(1/np.sqrt(2*np.pi*L)*integrate.trapz(y=u*np.exp(-1j*k*x),x=x))**2 #dx=-Umean*timestep
+    Ek2 = 0.5*np.abs(1/np.sqrt(2*np.pi*L)*integrate.trapz(y=u*np.exp(1j*k*x),x=x))**2   
     
     return Ek1+Ek2
 
 
 def Energy(data,Ls,indexes,Umeans):
     Energies = []
-    ks = np.logspace(-2,4,100)
+    ks = np.logspace(-7,-3,100)
     for j, (df,L,index,Umean) in enumerate(zip(data,Ls,indexes,Umeans)):
         Energy = np.zeros_like(ks)
-        print(j)
+        print(j) 
+        
         for i,k in enumerate(ks):
+                
             #print(i)
-            Energy[i] = Energy_k(df,index,L,k,Umean)
+            Energy[i] = Energy_k(df,index,k,Umean)
             #Energy[i] = E(k,df.iloc[0:index,0]-Umean,Umean,freq)
         Energies.append(Energy)
     return ks, Energies
 
+    
 
 def plotC(ks, Energies):
-    fig, ax = plt.subplots(figsize=(7, 5))
+    fig, ax = plt.subplots(figsize=(6, 4.5))
     for i, Energy in enumerate(Energies):
-        Energy_smooth = savgol_filter(Energy, 7, 1) # local linear smoothing with Savitzky-Golay filter
+        Energy_smooth = savgol_filter(Energy, 11, 1) # local linear smoothing with Savitzky-Golay filter
         #Energy_smooth = gaussian_filter1d(Energy,50)
         ax.loglog(ks,Energy_smooth,label=r'$A_'+str(i+1)+'$')
     ax.loglog(ks,ks**(-5/3),color="black",linestyle="--",label=r'5/3-law')
-    ax.vlines(x=[0.4], color='black',ymin=1e-10, ymax=5e3,ls=(0, (3, 1, 1, 1, 1, 1)),label=r'$L_\mathrm{int,E}$')
-    ax.vlines(x=[800], color='black',ymin=1e-10, ymax=5e3,ls=(0, (3, 1, 1, 1)),label=r'$\eta_\mathrm{E}$')
+    ax.vlines(x=[0.9], color='black',ymin=1e-12, ymax=2e5,ls='dotted',linewidth=2,label=r'$2\pi/L_\mathrm{int,E}$')
+    ax.vlines(x=[600], color='black',ymin=1e-12, ymax=2e5,ls='dashdot',label=r'$2\pi/\eta_\mathrm{E}$')
 
     #plt.axvline(x=0.4, color='black')
-    ax.legend()
-    ax.set_xlabel(r'$k$')
-    ax.set_ylabel(r'$E(k)$')
+    ax.legend(ncol=2,loc='upper right')
+    ax.set_xlabel(r'$k$ [m$^{-1}$]')
+    ax.set_ylabel(r'$E(k)$ [m$^3$s$^{-2}$]')
     ax.grid()
-            
+    plt.savefig('plotC.eps', format='eps')      
 
 def Parseval(data,Energies,ks):
     P1s=[]

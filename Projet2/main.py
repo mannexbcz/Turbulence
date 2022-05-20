@@ -7,6 +7,7 @@ Created on Fri May  6 08:20:40 2022
 
 from exercice3_1 import *
 from exercice3_2 import *
+from exercice3_3 import *
 
 #%%
 points =  initialize_map(npoints=50000)
@@ -26,6 +27,7 @@ plot_map(updated_points,beta=0.4)
 
 #%% do n steps
 points =  initialize_map(npoints=50000)
+
 points_nsteps = do_n_steps(2000,points,beta=0.4,alpha1=0.4,alpha2=0.4)
 
 #%% study two close points
@@ -34,7 +36,19 @@ study_two_close_points(npoints=50000,niters=1000,dist=1e-4,beta=0.4,alpha1=0.4,a
 
 #%% EXERCICE 3.2
 
-D0 = fractal_dim_numerical(points,100)
+D0,_,_ = fractal_dim_numerical(points_nsteps,100)
 
 #%% 
 dims_an, dims_num = compare_dims_different_alphas(npoints=50000,nsteps=2000,nbfit=100)
+
+#%% EXERCICE 3.3
+
+lambda1, lambda2 = lyapunov_exponents(nsteps=10, alpha1=0.3,alpha2=0.3,beta=0.5)
+
+#%%
+
+comparison_lyapunov_exponents(ntrials=1000,nsteps=10,epsilon0=1e-5)
+
+#%%
+test = compute_first_lyapunov(nsteps=10, epsilon0=1e-5,beta=0.5,alpha1=0.4,alpha2=0.4)
+    

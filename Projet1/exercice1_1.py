@@ -32,20 +32,50 @@ def x_from_time(data,Umeans):
     for i, (df, Umean) in enumerate(zip(data_x, Umeans)):
         n = len(df)
         time = np.linspace(0,n*timestep,n)
-        df['x'] = -Umean * time + i+1
+        df['x'] = -Umean * time #+ i+1
+        '''dx = Umean/f
+        x = -np.linspace(0,dx*(u.shape[0]-1),u.shape[0])'''
+
         #i+1 : ajoute le décalage spatial des sondes
     return data_x
 
-def plotA(data_x): 
-    fig, ax = plt.subplots(2,3,sharey=True,figsize=(10, 8))
+def plotA(data_x,Umeans): 
+    fig, ax = plt.subplots(2,3,sharey=True,figsize=(7, 6))
     
     for i, df in enumerate(data_x):
-        I = i % 2
-        J = i % 3
-        ax[I,J].plot(df['x'],df['Velocity'])
-        ax[I,J].set_title(r'$A_'+str(i+1)+'$')
+        if i == 0:
+            I=J=0
+        if i == 1:
+            I=0
+            J=1
+        if i == 2:
+            I=0
+            J=2
+        if i == 3:
+            I=1
+            J=0
+        if i == 4:
+            I=J=1
+        if i == 5:
+            I=1
+            J=2
+        ax[I,J].plot(df['x'],df['Velocity'], label = '$A_'+str(i+1)+'$')
+        ax[I,J].plot(df['x'],np.ones_like(df['x'])*Umeans[i], color='black',linestyle='--', label='$\langle u \rangle$')
+        #ax[I,J].set_title(r'$A_'+str(i+1)+'$')
+        ax[I,J].legend( loc='upper right')
         ax[I,J].set_xlabel(r'$x$ [m]')
         ax[I,J].set_ylabel(r'$u_{\mathrm{tot}}$ [m/s]')
         ax[I,J].grid()
+        
+    plt.savefig('plotA.eps', format='eps')
     #fig.savefig('')
     
+def plotA_zoom(data_x,Umeans):
+    fig, ax = plt.subplots(figsize=(6, 4))
+    for i, df in enumerate(data_x):
+        ax.plot(df['x'].iloc[0:8000],df['Velocity'].iloc[0:8000], label = '$A_'+str(i+1)+'$')
+    ax.legend( loc='upper left')
+    ax.set_xlabel(r'Upstream distance $x$ [m]')
+    ax.set_ylabel(r'$u_{\mathrm{tot}}$ [m/s]')
+    ax.grid()
+    plt.savefig('plotAZoom.eps', format='eps')
