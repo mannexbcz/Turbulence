@@ -12,6 +12,7 @@ from exercice1_6 import velocity_increment
 
 
 def nth_structure_fct(n,delta):
+    '''Computes the nth order structure function of delta'''
     Sn =  np.mean(delta**n)
     return Sn
 

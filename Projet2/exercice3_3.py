@@ -36,6 +36,8 @@ def Jacobian(point1, point2, alpha1,alpha2,beta):
 
 
 def lyapunov_exponents(nsteps, alpha1,alpha2,beta):
+    '''Computes the Lyapunov exponents under the hypothesis
+    that the two eigenvectors are along x- and y-direction'''
     eps1 = [[1],[0]]
     eps2 = [[0],[1]]
     point1 = initialize_map(npoints=1)
@@ -110,18 +112,16 @@ def comparison_lyapunov_exponents(ntrials,nsteps,epsilon0)  :
     
 
 def compute_first_lyapunov(nsteps,epsilon0,beta,alpha1,alpha2):
+    '''Computes the first Lyapunov exponent based on the difference between two 
+    initially close points'''
     point1 = initialize_map(npoints=1)
     point2 = point1 + epsilon0
     epsilons = np.zeros(nsteps)
-    #epsilons[0] = np.linalg.norm(point1-point2)
     for n in range(nsteps):
         point1 = step(point1,beta,alpha1,alpha2)
         point2 = step(point2,beta,alpha1,alpha2)
         
         epsilons[n] = np.linalg.norm(point1-point2)
-    
-   # fig,ax = plt.subplots(figsize=(5,4))
-   # ax.semilogy(np.arange(nsteps), )
     
     
     lambdas,_,_,_,_ = np.polyfit(np.arange(nsteps)+1,np.abs(np.log(epsilons/epsilon0)),1, full=True)

@@ -18,6 +18,7 @@ timestep = 1/freq
 #%%
 
 def autocorrelation(data,Umeans,lags):
+    '''Computes the autocorrelation of data for each lag in lags'''
     corrs = []
     for i, (df,Umean) in enumerate(zip(data,Umeans)):
         corr = sm.tsa.acf(df-Umean,nlags=lags,fft=True,adjusted=True)
@@ -25,6 +26,7 @@ def autocorrelation(data,Umeans,lags):
     return corrs
    
 def compute_corr_length(corrs,Umeans):
+    '''Computes the correlation length from the autocorrelation corr'''
     Ls = []
     indexes = []
     for i, (corr, Umean) in enumerate(zip(corrs,Umeans)):
@@ -59,12 +61,13 @@ def moving_average(x, w):
     return np.convolve(x, np.ones(w), 'valid') / w
 
 def compute_Lin(corrs,Umeans):
+    '''Computes the integral length scale by integrating the correlation'''
     Lins=[]
     for i, (corr, Umean) in enumerate(zip(corrs,Umeans)): 
+        '''Stop the integration of Lin if the average of the correlation
+        over 2000 values reaches 0 to avoid artefacts'''
         means = moving_average(corr,2000)
-        #meansequal0 = np.isclose(means,np.zeros_like(meantest), atol=1e-2)
         idx =  np.argmax(means<0, axis=0)
-        #idx = np.argmax(corr<0, axis=0)
         L = integrate.trapz(corr[0:idx], dx = Umean*timestep)
         Lins.append(L)
     return Lins

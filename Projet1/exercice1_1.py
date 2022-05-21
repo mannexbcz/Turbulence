@@ -15,6 +15,7 @@ timestep = 1/freq
 
 #%%
 def U_means(data):
+    '''Computes the mean velocity for each anemometer'''
     Umeans = []
     Is = []
     for i, df in enumerate(data):
@@ -27,16 +28,14 @@ def U_means(data):
     return Umeans, Is
 
 def x_from_time(data,Umeans):
+    '''Using Taylor Flow hypothesis, computes the spatial upstream
+    distance from the time series'''
     xs = []
     data_x = data
     for i, (df, Umean) in enumerate(zip(data_x, Umeans)):
         n = len(df)
         time = np.linspace(0,n*timestep,n)
-        df['x'] = -Umean * time #+ i+1
-        '''dx = Umean/f
-        x = -np.linspace(0,dx*(u.shape[0]-1),u.shape[0])'''
-
-        #i+1 : ajoute le décalage spatial des sondes
+        df['x'] = -Umean * time
     return data_x
 
 def plotA(data_x,Umeans): 

@@ -11,8 +11,9 @@ import os
 #%%
 
 def read_data():
+    '''Read the data files and returns a list of dataframes, 
+    1 for each anemometer'''
     path = 'C:/Users/manon/Desktop/Turbulences/Projet/data/'
-    #path = os.path.join(os.path.dirname(os.getcwd()), 'data/' )
     data = []
     for i in range(6):
         df = pd.read_csv(path+str(i+1)+'.txt',sep=' ', header=None, names =['Velocity'])

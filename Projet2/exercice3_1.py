@@ -74,7 +74,6 @@ def study_two_close_points(npoints,niters,dist,beta,alpha1,alpha2):
     ax.axis('equal')
     ax.set_xlabel(r'$x$')
     ax.set_ylabel(r'$y$')
-    #plt.savefig('twoclosepoints_begin4.eps', format='eps')
     # do n steps
     points_niters = do_n_steps(niters,points,beta,alpha1,alpha2)
     # final configuration

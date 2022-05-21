@@ -15,21 +15,18 @@ freq = 20e3  # Sampling frequency = 20kHz
 timestep = 1/freq 
 
 def Energy_k(df,index,k,Umean):
-    #x = df.iloc[0:index,1]
+    '''Comutes E(k)'''
     u = df.iloc[:,0]-Umean
-    #u = df['Velocity']
     dx= Umean*timestep
     x = df.iloc[:,1]
-    #x = df['x']
     L=x[0]-x[-1:]
-    #L = dx*df['Velocity'].count()
     Ek1 = 0.5*np.abs(1/np.sqrt(2*np.pi*L)*integrate.trapz(y=u*np.exp(-1j*k*x),x=x))**2 #dx=-Umean*timestep
     Ek2 = 0.5*np.abs(1/np.sqrt(2*np.pi*L)*integrate.trapz(y=u*np.exp(1j*k*x),x=x))**2   
-    
     return Ek1+Ek2
 
 
 def Energy(data,Ls,indexes,Umeans):
+    '''Computes the Energy spectrum'''
     Energies = []
     ks = np.logspace(-7,-3,100)
     for j, (df,L,index,Umean) in enumerate(zip(data,Ls,indexes,Umeans)):
